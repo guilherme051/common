@@ -57,8 +57,9 @@ int string_array_add(message *m, size_t array_offset, char *string) {
   
   assert(m->data <= array_start && array_start <= end);
   
+  prev = NULL;
   for(array_end=array_start;
-      array_end<end && ( *array_end!='\0' || ( prev && prev!='\0' ))
+      array_end<end && ( *array_end!='\0' || ( prev && *prev!='\0' ))
       ;prev=array_end++);
   
   needed_bytes = (strlen(string) + 1) - (end - array_end);
@@ -70,6 +71,7 @@ int string_array_add(message *m, size_t array_offset, char *string) {
       return -1;
     }
     
+    size_t insertion_offset = (size_t) (array_end - m->data);
     prev = realloc(m->data, needed_bytes);
     if(!prev) {
       print( ERROR, "realloc: %s", string );
@@ -78,7 +80,7 @@ int string_array_add(message *m, size_t array_offset, char *string) {
     m->data = prev;
     m->head.size = (uint16_t) needed_bytes;
     // recompute it. realloc can move memory around
-    array_end = m->data + array_offset + (array_end - array_start);
+    array_end = m->data + insertion_offset;
   }
   
   strncpy(array_end, string, strlen(string) + 1);

@@ -157,6 +157,9 @@ int sortedarray_del(array *a, comparable_item *i) {
  * @param i the ::comparable_item
  */
 comparable_item *sortedarray_get(array *a, uint32_t id) {
+  if (a == NULL || a->size == 0)
+    return NULL;
+
   int index;
   
   index = sortedarray_search_index(a, id);
